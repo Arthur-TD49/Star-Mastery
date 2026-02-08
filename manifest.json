@@ -1,0 +1,33 @@
+{
+    "name": "Star Mastery",
+    "short_name": "StarMastery",
+    "description": "Transformez votre liste de tâches en un jeu et gagnez des étoiles !",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0f0c29",
+    "theme_color": "#302b63",
+    "icons": [
+        {
+            "src": "icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-maskable-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icon-maskable-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
