@@ -1,0 +1,237 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e); /* Galactic gradient */
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: rgba(30, 30, 50, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "todo bonus";
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+header {
+    grid-area: header;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #5a5a7a;
+    padding-bottom: 20px;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    color: #a7e0ff;
+    font-size: 2.8em;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(167, 224, 255, 0.7);
+}
+
+header p {
+    color: #c0c0d0;
+    font-size: 1.1em;
+}
+
+.stars-display {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8em;
+    color: #ffda6a;
+    margin-top: 15px;
+    text-shadow: 0 0 8px rgba(255, 218, 106, 0.8);
+}
+
+main {
+    display: contents; /* Allows children to flow into the grid */
+}
+
+.todo-section {
+    grid-area: todo;
+    background-color: rgba(40, 40, 60, 0.8);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.bonus-section {
+    grid-area: bonus;
+    background-color: rgba(40, 40, 60, 0.8);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #a7e0ff;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.task-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.task-input input[type="text"],
+.task-input select {
+    flex-grow: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(60, 60, 80, 0.9);
+    color: #e0e0e0;
+    font-size: 1em;
+}
+
+.task-input input[type="text"]::placeholder {
+    color: #a0a0b0;
+}
+
+.task-input button,
+.buy-bonus-btn,
+.remove-task-btn,
+.complete-task-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #6a5acd; /* Royal Purple */
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.task-input button:hover,
+.buy-bonus-btn:hover,
+.remove-task-btn:hover,
+.complete-task-btn:hover {
+    background-color: #8a7acd;
+    transform: translateY(-2px);
+}
+
+#taskList {
+    list-style: none;
+    padding: 0;
+}
+
+#taskList li {
+    background-color: rgba(60, 60, 80, 0.8);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s ease;
+}
+
+#taskList li.completed {
+    background-color: rgba(40, 60, 40, 0.8); /* Greenish tint for completed */
+    text-decoration: line-through;
+    color: #b0b0b0;
+}
+
+#taskList li span.task-name {
+    flex-grow: 1;
+    font-size: 1.1em;
+}
+
+#taskList li .task-stars {
+    color: #ffda6a;
+    font-weight: bold;
+    margin-right: 15px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+#taskList li .task-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.complete-task-btn {
+    background-color: #28a745; /* Green */
+}
+
+.complete-task-btn:hover {
+    background-color: #218838;
+}
+
+.remove-task-btn {
+    background-color: #dc3545; /* Red */
+}
+
+.remove-task-btn:hover {
+    background-color: #c82333;
+}
+
+
+.bonus-items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.bonus-item {
+    background-color: rgba(60, 60, 80, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bonus-item h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffe082;
+    margin-top: 0;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.bonus-item p {
+    color: #c0c0d0;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+}
+
+.buy-bonus-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.buy-bonus-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        grid-template-areas:
+            "header header"
+            "todo todo"
+            "bonus bonus";
+        grid-template-columns: 1fr;
+    }
+    .task-input {
+        flex-direction: column;
+    }
+    .task-input button {
+        width: 100%;
+    }
+}
