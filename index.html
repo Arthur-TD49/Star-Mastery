@@ -2,17 +2,18 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Mastery - Ton Gamified To-Do List</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Star Mastery</title>
+
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Star Mastery">
+    
     <link rel="apple-touch-icon" href="icon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="icon-167x167.png">
+
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -20,21 +21,26 @@
         <header>
             <h1>Star Mastery</h1>
             <p>Ta Constellation du Succès</p>
+            
             <div class="stars-display">
                 Étoiles : <span id="starCount">0</span> ⭐
+                <button id="pipBtn" class="pip-button">📺 Mode Flottant</button>
             </div>
+
+            <canvas id="pipCanvas" width="200" height="100" style="display:none;"></canvas>
+            <video id="pipVideo" autoplay muted style="display:none;"></video>
         </header>
 
         <main>
             <section class="todo-section">
                 <h2>Mes Tâches</h2>
                 <div class="task-input">
-                    <input type="text" id="newTaskInput" placeholder="Ajouter une nouvelle tâche...">
+                    <input type="text" id="newTaskInput" placeholder="Ajouter une tâche...">
                     <select id="taskDifficulty">
                         <option value="1">⭐ Quick Hit</option>
                         <option value="2">⭐⭐ Standard</option>
                         <option value="4">⭐⭐⭐⭐ Deep Work</option>
-                        <option value="1" data-is-habit="true">⭐ Habitude (Quotidien)</option>
+                        <option value="1" data-is-habit="true">⭐ Habitude</option>
                     </select>
                     <button id="addTaskBtn">Ajouter</button>
                 </div>
@@ -47,22 +53,22 @@
                 <div class="bonus-items">
                     <div class="bonus-item" data-cost="5">
                         <h3>Petit Plaisir</h3>
-                        <p>15 min de réseaux sociaux ou petite friandise</p>
+                        <p>15 min de réseaux sociaux</p>
                         <button class="buy-bonus-btn">Acheter (5 ⭐)</button>
                     </div>
                     <div class="bonus-item" data-cost="10">
                         <h3>Power-Up</h3>
-                        <p>30 min de jeu vidéo ou un épisode de série</p>
+                        <p>30 min de jeu vidéo</p>
                         <button class="buy-bonus-btn">Acheter (10 ⭐)</button>
                     </div>
                     <div class="bonus-item" data-cost="25">
                         <h3>Grand Repos</h3>
-                        <p>Soirée libre totale ou repas spécial</p>
+                        <p>Soirée libre totale</p>
                         <button class="buy-bonus-btn">Acheter (25 ⭐)</button>
                     </div>
                     <div class="bonus-item" data-cost="50">
                         <h3>Légendaire</h3>
-                        <p>Achat plaisir (nouveau jeu, vêtement, etc.)</p>
+                        <p>Un achat plaisir réel</p>
                         <button class="buy-bonus-btn">Acheter (50 ⭐)</button>
                     </div>
                 </div>
@@ -71,16 +77,13 @@
     </div>
 
     <script src="script.js"></script>
+    
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker enregistré avec succès:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Échec de l\'enregistrement du Service Worker:', error);
-                    });
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW enregistré !', reg))
+                    .catch(err => console.log('Erreur SW', err));
             });
         }
     </script>
