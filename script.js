@@ -99,3 +99,44 @@ document.addEventListener('DOMContentLoaded', () => {
     updateStarCount();
     renderTasks();
 });
+const pipBtn = document.getElementById('pipBtn');
+const canvas = document.getElementById('pipCanvas');
+const ctx = canvas.getContext('2d');
+const video = document.getElementById('pipVideo');
+
+// Fonction pour dessiner le score sur le canvas
+function drawScoreToCanvas() {
+    ctx.fillStyle = "#0f0c29"; // Fond sombre assorti
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = "#ffda6a"; // Couleur des étoiles
+    ctx.font = "bold 24px Orbitron, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("STARS", 100, 40);
+    
+    ctx.font = "bold 40px Arial";
+    ctx.fillText(`${stars} ⭐`, 100, 85);
+}
+
+// Mise à jour du canvas dès que le score change
+function updatePip() {
+    drawScoreToCanvas();
+}
+
+// Intercepter le clic pour lancer le Picture-in-Picture
+pipBtn.addEventListener('click', async () => {
+    try {
+        drawScoreToCanvas();
+        // Créer un flux vidéo à partir du canvas (1 image par seconde suffit)
+        const stream = canvas.captureStream(1); 
+        video.srcObject = stream;
+        
+        await video.play();
+        await video.requestPictureInPicture();
+    } catch (error) {
+        console.error("Le mode PiP a échoué : ", error);
+        alert("Ton navigateur ne supporte pas encore le mode PiP pour canvas.");
+    }
+});
+
+// N'oublie pas d'appeler updatePip() à l'intérieur de ta fonction updateStarCount() existante !
