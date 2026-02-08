@@ -1,17 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Éléments DOM
     const newTaskInput = document.getElementById('newTaskInput');
     const taskDifficulty = document.getElementById('taskDifficulty');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskList = document.getElementById('taskList');
     const starCountDisplay = document.getElementById('starCount');
     const buyBonusBtns = document.querySelectorAll('.buy-bonus-btn');
+    
+    // Éléments PiP (Mode Flottant)
+    const pipBtn = document.getElementById('pipBtn');
+    const canvas = document.getElementById('pipCanvas');
+    const ctx = canvas.getContext('2d');
+    const video = document.getElementById('pipVideo');
 
+    // Données du jeu
     let stars = parseInt(localStorage.getItem('starCount')) || 0;
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // --- LOGIQUE DE BASE ---
 
     function updateStarCount() {
         starCountDisplay.textContent = stars;
         localStorage.setItem('starCount', stars);
+        drawScoreToCanvas(); // Met à jour le dessin pour le mode flottant
     }
 
     function saveTasks() {
@@ -22,121 +33,123 @@ document.addEventListener('DOMContentLoaded', () => {
         taskList.innerHTML = '';
         tasks.forEach((task, index) => {
             const li = document.createElement('li');
-            if (task.completed) {
-                li.classList.add('completed');
-            }
+            if (task.completed) li.classList.add('completed');
+            
             li.innerHTML = `
                 <span class="task-name">${task.name}</span>
                 <span class="task-stars">${'⭐'.repeat(task.difficulty)}</span>
                 <div class="task-actions">
-                    <button class="complete-task-btn" data-index="${index}" ${task.completed ? 'disabled' : ''}>${task.completed ? 'Terminée' : 'Terminer'}</button>
-                    <button class="remove-task-btn" data-index="${index}">Supprimer</button>
+                    <button class="complete-task-btn" data-index="${index}" ${task.completed ? 'disabled' : ''}>
+                        ${task.completed ? 'Fait !' : 'Terminer'}
+                    </button>
+                    <button class="remove-task-btn" data-index="${index}">🗑️</button>
                 </div>
             `;
             taskList.appendChild(li);
         });
-        attachEventListenersToTaskButtons();
+        attachTaskEvents();
     }
 
-    function attachEventListenersToTaskButtons() {
-        document.querySelectorAll('.complete-task-btn').forEach(button => {
-            button.onclick = (event) => {
-                const index = parseInt(event.target.dataset.index);
-                if (!tasks[index].completed) {
-                    tasks[index].completed = true;
-                    stars += tasks[index].difficulty;
+    function attachTaskEvents() {
+        document.querySelectorAll('.complete-task-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                const idx = e.target.dataset.index;
+                if (!tasks[idx].completed) {
+                    tasks[idx].completed = true;
+                    stars += tasks[idx].difficulty;
                     updateStarCount();
                     saveTasks();
-                    renderTasks(); // Re-render to update UI (line-through, disabled button)
+                    renderTasks();
                 }
             };
         });
 
-        document.querySelectorAll('.remove-task-btn').forEach(button => {
-            button.onclick = (event) => {
-                const index = parseInt(event.target.dataset.index);
-                tasks.splice(index, 1);
+        document.querySelectorAll('.remove-task-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                tasks.splice(e.target.dataset.index, 1);
                 saveTasks();
                 renderTasks();
             };
         });
     }
 
-    addTaskBtn.addEventListener('click', () => {
-        const taskName = newTaskInput.value.trim();
-        const difficulty = parseInt(taskDifficulty.value);
-        const isHabit = taskDifficulty.options[taskDifficulty.selectedIndex].dataset.isHabit === 'true';
-
-        if (taskName) {
-            tasks.push({
-                name: taskName,
-                difficulty: difficulty,
-                completed: false,
-                isHabit: isHabit
-            });
+    addTaskBtn.onclick = () => {
+        const name = newTaskInput.value.trim();
+        const diff = parseInt(taskDifficulty.value);
+        if (name) {
+            tasks.push({ name, difficulty: diff, completed: false });
             newTaskInput.value = '';
             saveTasks();
             renderTasks();
         }
-    });
+    };
 
-    buyBonusBtns.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const cost = parseInt(event.target.closest('.bonus-item').dataset.cost);
-            const bonusName = event.target.closest('.bonus-item').querySelector('h3').textContent;
-
+    buyBonusBtns.forEach(btn => {
+        btn.onclick = (e) => {
+            const cost = parseInt(e.target.closest('.bonus-item').dataset.cost);
             if (stars >= cost) {
                 stars -= cost;
                 updateStarCount();
-                alert(`Félicitations ! Tu as débloqué : "${bonusName}" !`);
+                alert("Bonus débloqué ! Profite bien !");
             } else {
-                alert(`Tu n'as pas assez d'étoiles pour acheter "${bonusName}". Il te manque ${cost - stars} ⭐.`);
+                alert(`Il te manque ${cost - stars} ⭐ !`);
             }
-        });
+        };
     });
 
-    // Initial load
+    // --- LOGIQUE MODE FLOTTANT (PICTURE-IN-PICTURE) ---
+
+    function drawScoreToCanvas() {
+        // Fond
+        ctx.fillStyle = "#1e1e32"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Texte "Score"
+        ctx.fillStyle = "#a7e0ff";
+        ctx.font = "bold 20px Orbitron, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("OBJECTIF", 100, 35);
+        
+        // Nombre d'étoiles
+        ctx.fillStyle = "#ffda6a";
+        ctx.font = "bold 35px Arial";
+        ctx.fillText(`${stars} ⭐`, 100, 80);
+    }
+
+    pipBtn.onclick = async () => {
+        try {
+            drawScoreToCanvas();
+            
+            // captureStream(FPS) - 30 FPS pour iPad
+            const stream = canvas.captureStream(30);
+            video.srcObject = stream;
+
+            // Astuce Safari iPad : la vidéo doit être "active" dans la page
+            video.style.display = "block";
+            video.style.position = "fixed";
+            video.style.top = "0";
+            video.style.width = "1px";
+            video.style.height = "1px";
+            video.style.opacity = "0.01";
+
+            await video.play();
+
+            // Demande le mode Picture-in-Picture
+            if (video.requestPictureInPicture) {
+                await video.requestPictureInPicture();
+            } else if (video.webkitSetPresentationMode) {
+                // Ancienne méthode Safari/iOS
+                video.webkitSetPresentationMode("picture-in-picture");
+            }
+            
+            video.style.display = "none";
+        } catch (err) {
+            console.error("Erreur PiP:", err);
+            alert("Le mode flottant nécessite que le site soit servi en HTTPS sur iPad.");
+        }
+    };
+
+    // Initialisation
     updateStarCount();
     renderTasks();
 });
-const pipBtn = document.getElementById('pipBtn');
-const canvas = document.getElementById('pipCanvas');
-const ctx = canvas.getContext('2d');
-const video = document.getElementById('pipVideo');
-
-// Fonction pour dessiner le score sur le canvas
-function drawScoreToCanvas() {
-    ctx.fillStyle = "#0f0c29"; // Fond sombre assorti
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    ctx.fillStyle = "#ffda6a"; // Couleur des étoiles
-    ctx.font = "bold 24px Orbitron, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("STARS", 100, 40);
-    
-    ctx.font = "bold 40px Arial";
-    ctx.fillText(`${stars} ⭐`, 100, 85);
-}
-
-// Mise à jour du canvas dès que le score change
-function updatePip() {
-    drawScoreToCanvas();
-}
-
-// Intercepter le clic pour lancer le Picture-in-Picture
-pipBtn.addEventListener('click', async () => {
-    try {
-        drawScoreToCanvas();
-        // Créer un flux vidéo à partir du canvas (1 image par seconde suffit)
-        const stream = canvas.captureStream(1); 
-        video.srcObject = stream;
-        
-        await video.play();
-        await video.requestPictureInPicture();
-    } catch (error) {
-        console.error("Le mode PiP a échoué : ", error);
-        alert("Ton navigateur ne supporte pas encore le mode PiP pour canvas.");
-    }
-});
-
-// N'oublie pas d'appeler updatePip() à l'intérieur de ta fonction updateStarCount() existante !
